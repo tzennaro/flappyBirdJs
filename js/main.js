@@ -1,3 +1,5 @@
+'use strict';
+
 var svgWidth = 400,
     svgHeight = 600,
     tubeWidth = 50,
@@ -10,9 +12,9 @@ var svg = d3.select('#mainContainer')
         'height': svgHeight
     });
 
-var id = 0
+var id = 0;
 
-function Timer () {
+function Timer() {
     id = id + 1;
 
     appendTube();
@@ -22,14 +24,14 @@ function Timer () {
 
 setInterval('Timer()', 1500);
 
-function appendTube () {
+function appendTube() {
 
-    var tubeHeight = 50;
+    var tubeHeight = 50,
 
-    var positionRandomizer = Math.random().toFixed(1);
+        positionRandomizer = Math.random().toFixed(1),
 
-    var rect = svg.append('g')
-        .attr('id', function () { return 'rect-' + id.toString(); });
+        rect = svg.append('g')
+            .attr('id', function () { return 'rect-' + id.toString(); });
 
     //top tube
     rect.append('rect')
@@ -38,7 +40,9 @@ function appendTube () {
             'y': 0,
             'height': tubeHeight,
             'width': tubeWidth,
-            'fill': 'green'
+            'fill': 'rgb(118,190,58)',
+            'stroke-width': 2,
+            'stroke': 'rgb(81,59,71)'
         });
 
     //bottom tube
@@ -48,7 +52,9 @@ function appendTube () {
             'y': svgHeight - tubeHeight,
             'height': tubeHeight,
             'width': tubeWidth,
-            'fill': 'green'
+            'fill': 'rgb(118,190,58)',
+            'stroke-width': 2,
+            'stroke': 'rgb(81,59,71)'
         });
 
     moveRect(rect);
@@ -60,6 +66,6 @@ function moveRect(moveThing) {
         .transition()
         .ease('linear')
         .duration(time * 1000)
-        .attr('x', function () { return -tubeWidth; });
+        .attr('x', function () { return -tubeWidth - 2; });
 }
 
