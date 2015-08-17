@@ -9,7 +9,7 @@ var svgWidth = 400,
     fallTime = 0.175,
     goUpTime = 0.25,
     rectTime = 5,
-    bumpUp = 100;
+    bumpUp = 75;
 
 var svg = d3.select('#mainContainer')
     .append('svg')
