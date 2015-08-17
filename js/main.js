@@ -3,10 +3,11 @@
 var svgWidth = 400,
     svgHeight = 600,
     tubeWidth = 50,
+    tubeGap = 75,
     birdHeight = 30,
     birdWidth = 30,
-    fallTime = 4,
-    goUpTime = 0.5,
+    fallTime = 0.175,
+    goUpTime = 0.25,
     rectTime = 5,
     bumpUp = 100;
 
@@ -27,6 +28,8 @@ var bird = svg.append('rect')
         'y': (svgHeight - birdHeight) / 2
     });
 
+//console.log(bird[0][0]);
+
 var flightHeight = bird[0][0].y.baseVal.value;
 
 svg.append('text')
@@ -41,7 +44,7 @@ svg.append('text')
         'text-anchor': 'middle',
         'fill': 'white',
         'stroke': 'black',
-        'stroke-width': 1
+        'stroke-width': 2
     })
     .text('TAP TO START');
 
@@ -67,17 +70,11 @@ setInterval(function gameStarts() {
     }
 }, 1500);
 
-//function checkBirdHeight() {
-//    flightHeight = bird[0][0].y.baseVal.value;
-//
-//     gravityPull(bird, flightHeight); }
-//};
-
 function appendTube() {
 
     var tubeHeight = 50,
 
-        positionRandomizer = Math.random().toFixed(1),
+        heightRandomizer = Math.floor(Math.random()*((svgHeight * 0.66) - (svgHeight * 0.33) + 1) + (svgHeight * 0.33)),
 
         rect = svg.append('g')
             .attr('id', function () { return 'rect-' + id.toString(); });
@@ -87,7 +84,7 @@ function appendTube() {
         .attr({
             'x': svgWidth,
             'y': 0,
-            'height': tubeHeight,
+            'height': heightRandomizer - tubeGap,
             'width': tubeWidth,
             'fill': 'rgb(118,190,58)',
             'stroke-width': 2,
@@ -98,8 +95,8 @@ function appendTube() {
     rect.append('rect')
         .attr({
             'x': svgWidth,
-            'y': svgHeight - tubeHeight,
-            'height': tubeHeight,
+            'y': heightRandomizer + tubeGap,
+            'height': svgHeight - heightRandomizer + tubeGap*2,
             'width': tubeWidth,
             'fill': 'rgb(118,190,58)',
             'stroke-width': 2,
@@ -122,9 +119,9 @@ function gravityPull(bird, flightHeight) {
     flightHeight = bird[0][0].y.baseVal.value;
 
     if (fall === true && flightHeight < svgHeight - birdHeight) {
-        console.log(flightHeight + birdHeight);
+
         bird.transition()
-            .duration(250)
+            .duration(fallTime * 1000)
             .ease('linear')
             .attr({
                 'y': flightHeight + (birdHeight)
@@ -138,9 +135,7 @@ function birdBump(bird) {
 
     flightHeight = bird[0][0].y.baseVal.value;
 
-    bird.attr({
-            'y': flightHeight - bumpUp
-        });
+    bird.attr('y', flightHeight - bumpUp);
 
     fall = true;
 
