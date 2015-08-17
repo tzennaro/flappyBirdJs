@@ -8,7 +8,7 @@ var svgWidth = 400,
     fallTime = 4,
     goUpTime = 0.5,
     rectTime = 5,
-    bumpUp = 50;
+    bumpUp = 100;
 
 var svg = d3.select('#mainContainer')
     .append('svg')
@@ -54,6 +54,7 @@ d3.select('html').on('click', function (){
     start = true;
     fall = true;
     birdBump(bird);
+    gravityPull(bird, flightHeight);
 });
 
 setInterval(function gameStarts() {
@@ -66,11 +67,11 @@ setInterval(function gameStarts() {
     }
 }, 1500);
 
-setInterval(function checkBirdHeight() {
-    flightHeight = bird[0][0].y.baseVal.value;
-
-    if (fall === true && flightHeight < svgHeight - birdHeight) { gravityPull(bird, flightHeight); }
-}, 75);
+//function checkBirdHeight() {
+//    flightHeight = bird[0][0].y.baseVal.value;
+//
+//     gravityPull(bird, flightHeight); }
+//};
 
 function appendTube() {
 
@@ -118,12 +119,18 @@ function moveRect(moveThing) {
 }
 
 function gravityPull(bird, flightHeight) {
-    bird.transition()
-        .ease('linear')
-        .duration(75)
-        .attr({
-            'y': flightHeight + (birdHeight/3)
-        });
+    flightHeight = bird[0][0].y.baseVal.value;
+
+    if (fall === true && flightHeight < svgHeight - birdHeight) {
+        console.log(flightHeight + birdHeight);
+        bird.transition()
+            .duration(250)
+            .ease('linear')
+            .attr({
+                'y': flightHeight + (birdHeight)
+            })
+            .each('end', function () {gravityPull(bird, flightHeight)});
+    }
 }
 
 function birdBump(bird) {
