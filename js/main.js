@@ -3,7 +3,10 @@
 var svgWidth = 400,
     svgHeight = 600,
     tubeWidth = 50,
-    time = 5;
+    birdHeight = 30,
+    birdWidth = 30,
+    fallTime = 1,
+    rectTime = 5;
 
 var svg = d3.select('#mainContainer')
     .append('svg')
@@ -12,14 +15,47 @@ var svg = d3.select('#mainContainer')
         'height': svgHeight
     });
 
+var bird = svg.append('rect')
+    .attr({
+        'fill': 'red',
+        'width': birdWidth,
+        'height': birdHeight,
+        'x': (svgWidth / 3) - (birdWidth / 2),
+        'y': (svgHeight - birdHeight) / 2
+    });
+
+svg.append('text')
+    .attr({
+        'id': 'clickToStart',
+        'x': svgWidth / 2,
+        'y': svgHeight / 2,
+        'pointer-events': 'none',
+        'font-family': 'sans-serif',
+        'font-size': '30px',
+        'text-anchor': 'middle',
+        'fill': 'white',
+        'stroke': 'black',
+        'stroke-width': 1
+    })
+    .text('CLICK TO START');
+
 var id = 0;
+
+var start = false;
+
+svg.on('click', function (){
+    start = true;
+});
 
 function Timer() {
     id = id + 1;
 
-    appendTube();
-
-    svg.select('#rect-' + (id - time).toString()).remove();
+    if (start === true) {
+        svg.select('#clickToStart').remove();
+        appendTube();
+        gravityPull(bird);
+        svg.select('#rect-' + (id - rectTime).toString()).remove();
+    }
 }
 
 setInterval('Timer()', 1500);
@@ -65,7 +101,15 @@ function moveRect(moveThing) {
     moveThing.selectAll('rect')
         .transition()
         .ease('linear')
-        .duration(time * 1000)
+        .duration(rectTime * 1000)
         .attr('x', function () { return -tubeWidth - 2; });
 }
 
+function gravityPull(bird) {
+    bird.transition()
+        .ease('cubic-in')
+        .duration(fallTime * 1000)
+        .attr({
+        'y': svgHeight - birdHeight
+    });
+}
