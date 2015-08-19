@@ -8,7 +8,9 @@ var svgWidth = 400,
     birdWidth = 30,
     fallTime = 0.175,
     goUpTime = 0.25,
+    rectSpawn = 1.5,
     rectTime = 5,
+    rectSpeed = 5,
     bumpUp = 75;
 
 var svg = d3.select('#mainContainer')
@@ -28,10 +30,24 @@ var bird = svg.append('rect')
         'y': (svgHeight - birdHeight) / 2
     });
 
-//console.log(bird[0][0]);
-
 var flightHeight = bird[0][0].y.baseVal.value;
 
+//score
+svg.append('text')
+    .attr({
+        'id': 'scoreCounter',
+        'x': 10,
+        'y': 20,
+        'pointer-events': 'none',
+        'font-family': 'sans-serif',
+        'font-weight': 'bold',
+        'font-size': '15px',
+        'text-anchor': 'start',
+        'fill': 'black'
+    })
+    .text('score: ');
+
+//tap to start
 svg.append('text')
     .attr({
         'id': 'clickToStart',
@@ -68,6 +84,10 @@ setInterval(function gameStarts() {
         appendTube();
         svg.select('#rect-' + (id - rectTime).toString()).remove();
     }
+}, rectSpawn * 1000);
+
+setInterval(function () {
+    if (start === true && rectSpeed >= 1.25) { rectSpeed = rectSpeed - 0.15; }
 }, 1500);
 
 function appendTube() {
@@ -82,6 +102,7 @@ function appendTube() {
     //top tube
     rect.append('rect')
         .attr({
+            'class': 'tubeRect',
             'x': svgWidth,
             'y': 0,
             'height': heightRandomizer - tubeGap,
@@ -94,6 +115,7 @@ function appendTube() {
     //bottom tube
     rect.append('rect')
         .attr({
+            'class': 'tubeRect',
             'x': svgWidth,
             'y': heightRandomizer + tubeGap,
             'height': svgHeight - heightRandomizer + tubeGap*2,
@@ -111,7 +133,7 @@ function moveRect(moveThing) {
     moveThing.selectAll('rect')
         .transition()
         .ease('linear')
-        .duration(rectTime * 1000)
+        .duration(rectSpeed * 1000)
         .attr('x', function () { return -tubeWidth - 2; });
 }
 
@@ -139,4 +161,8 @@ function birdBump(bird) {
 
     fall = true;
 
+}
+
+function collision(bird, tube) {
+//    if (bird[0][0].y.baseVal.value === ) {}
 }
