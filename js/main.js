@@ -48,7 +48,7 @@ svg.append('text')
     .text('score: ');
 
 //tap to start
-svg.append('text')
+var mainText = svg.append('text')
     .attr({
         'id': 'clickToStart',
         'x': svgWidth / 2,
@@ -61,8 +61,9 @@ svg.append('text')
         'fill': 'white',
         'stroke': 'black',
         'stroke-width': 2
-    })
-    .text('TAP TO START');
+    });
+
+mainText.text('TAP TO START');
 
 var id = 0;
 
@@ -72,6 +73,7 @@ var fall = false;
 d3.select('html').on('click', function (){
     start = true;
     fall = true;
+    mainText.text('');
     birdBump(bird);
     gravityPull(bird, flightHeight);
 });
@@ -80,9 +82,25 @@ setInterval(function gameStarts() {
     id = id + 1;
 
     if (start === true) {
-        svg.select('#clickToStart').remove();
         appendTube();
         svg.select('#rect-' + (id - rectTime).toString()).remove();
+
+    svg.selectAll('.tubeRectTop')
+        .each(function (d) {
+            if (this.x.baseVal.value <= ((svgWidth / 3) + birdWidth) && this.x.baseVal.value >= ((svgWidth / 3) - tubeWidth) && bird[0][0].y.baseVal.value <= this.height.baseVal.value)
+                {
+                    console.log('you lost - TOP');
+                    mainText.text('GAME OVER');
+                    d3.select('html').on('click', function (){});
+                }
+        });
+
+    svg.selectAll('.tubeRectBot')
+        .each(function (d) {
+            if (this.x.baseVal.value <= ((svgWidth / 3) + birdWidth) && this.x.baseVal.value >= ((svgWidth / 3) - tubeWidth) && bird[0][0].height.baseVal.value >= this.y.baseVal.value)
+                { console.log('you lost - BOT'); }
+        });
+
     }
 }, rectSpawn * 1000);
 
@@ -102,7 +120,7 @@ function appendTube() {
     //top tube
     rect.append('rect')
         .attr({
-            'class': 'tubeRect',
+            'class': 'tubeRectTop',
             'x': svgWidth,
             'y': 0,
             'height': heightRandomizer - tubeGap,
@@ -115,7 +133,7 @@ function appendTube() {
     //bottom tube
     rect.append('rect')
         .attr({
-            'class': 'tubeRect',
+            'class': 'tubeRectBot',
             'x': svgWidth,
             'y': heightRandomizer + tubeGap,
             'height': svgHeight - heightRandomizer + tubeGap*2,
@@ -163,6 +181,3 @@ function birdBump(bird) {
 
 }
 
-function collision(bird, tube) {
-//    if (bird[0][0].y.baseVal.value === ) {}
-}
