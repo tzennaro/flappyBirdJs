@@ -180,4 +180,3 @@ function birdBump(bird) {
     fall = true;
 
 }
-
