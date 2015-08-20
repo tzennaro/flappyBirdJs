@@ -30,8 +30,7 @@ var bird = svg.append('rect')
         'y': (svgHeight - birdHeight) / 2
     });
 
-var flightHeight = bird[0][0].y.baseVal.value;
-
+var flightHeight = bird[0][0].y.animVal.value;
 //score
 svg.append('text')
     .attr({
@@ -67,8 +66,9 @@ mainText.text('TAP TO START');
 
 var id = 0;
 
-var start = false;
-var fall = false;
+var start = false,
+    gameOver = false,
+    fall = false;
 
 d3.select('html').on('click', function (){
     start = true;
@@ -87,7 +87,7 @@ setInterval(function gameStarts() {
 
     svg.selectAll('.tubeRectTop')
         .each(function (d) {
-            if (this.x.baseVal.value <= ((svgWidth / 3) + birdWidth) && this.x.baseVal.value >= ((svgWidth / 3) - tubeWidth) && bird[0][0].y.baseVal.value <= this.height.baseVal.value)
+            if (this.x.baseVal.value <= ((svgWidth / 3) + birdWidth) && this.x.baseVal.value >= ((svgWidth / 3) - tubeWidth) && flightHeight <= this.height.baseVal.value)
                 {
                     console.log('you lost - TOP');
                     mainText.text('GAME OVER');
@@ -97,8 +97,12 @@ setInterval(function gameStarts() {
 
     svg.selectAll('.tubeRectBot')
         .each(function (d) {
-            if (this.x.baseVal.value <= ((svgWidth / 3) + birdWidth) && this.x.baseVal.value >= ((svgWidth / 3) - tubeWidth) && bird[0][0].height.baseVal.value >= this.y.baseVal.value)
-                { console.log('you lost - BOT'); }
+            if (this.x.baseVal.value <= ((svgWidth / 3) + birdWidth) && this.x.baseVal.value >= ((svgWidth / 3) - tubeWidth) && flightHeight >= this.y.baseVal.value)
+                {
+                    console.log('you lost - BOT');
+                    mainText.text('GAME OVER');
+                    d3.select('html').on('click', function (){});
+                }
         });
 
     }
@@ -108,14 +112,18 @@ setInterval(function () {
     if (start === true && rectSpeed >= 1.25) { rectSpeed = rectSpeed - 0.15; }
 }, 1500);
 
+setInterval(function whereIsBird() {
+    flightHeight = bird[0][0].y.animVal.value;
+}, 50);
+
 function appendTube() {
 
     var tubeHeight = 50,
 
-        heightRandomizer = Math.floor(Math.random()*((svgHeight * 0.66) - (svgHeight * 0.33) + 1) + (svgHeight * 0.33)),
+        heightRandomizer = Math.floor(Math.random()*((svgHeight * 0.66) - (svgHeight * 0.33) + 1) + (svgHeight * 0.33));
 
-        rect = svg.append('g')
-            .attr('id', function () { return 'rect-' + id.toString(); });
+    var rect = svg.append('g')
+        .attr('id', function () { return 'rect-' + id.toString(); });
 
     //top tube
     rect.append('rect')
